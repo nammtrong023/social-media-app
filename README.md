@@ -4,7 +4,7 @@
 
 ## Backend Source
 
-The backend source code for this project, you can found in the [backend repository](link-to-backend-repository).
+The backend source code for this project, you can found in the [backend repository](https://github.com/nammtrong023/social-media-app-be).
 
 ### Features
 
