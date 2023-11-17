@@ -16,23 +16,27 @@ export const useChatQuery = () => {
     const { conversationId } = useConversation();
 
     const fetchMessages = async (pageParam: undefined) => {
-        const result = await axiosPrivate.get(`${process.env.NEXT_PUBLIC_BASE_URL}/messages`, {
-            params: {
-                cursor: pageParam,
-                conversationId,
+        const result = await axiosPrivate.get(
+            `${process.env.NEXT_PUBLIC_BASE_URL}/messages`,
+            {
+                params: {
+                    cursor: pageParam,
+                    conversationId,
+                },
             },
-        });
+        );
 
         return result.data;
     };
 
-    const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } = useInfiniteQuery({
-        queryKey: ['get-msg'],
-        queryFn: ({ pageParam }) => fetchMessages(pageParam),
-        initialPageParam: undefined,
-        getNextPageParam: (lastPage) => lastPage?.nextCursor,
-        refetchInterval: isConnected ? false : 1000,
-    });
+    const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } =
+        useInfiniteQuery({
+            queryKey: ['get-msg'],
+            queryFn: ({ pageParam }) => fetchMessages(pageParam),
+            initialPageParam: undefined,
+            getNextPageParam: (lastPage) => lastPage?.nextCursor,
+            refetchInterval: isConnected ? false : 1000,
+        });
 
     return {
         data,

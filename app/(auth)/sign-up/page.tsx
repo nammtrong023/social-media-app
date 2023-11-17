@@ -251,11 +251,6 @@ const RegisterPage = () => {
                                     <FormItem>
                                         <div className='h-10 lg:h-[52px] rounded-md lg:rounded-[10px] w-full border border-gray78 flex items-center justify-center'>
                                             <RadioGroupForm
-                                                color={
-                                                    theme == 'dark'
-                                                        ? '#fff'
-                                                        : '#4E5D78'
-                                                }
                                                 className='flex items-center justify-center !mt-0'
                                                 field={field}
                                                 disabled={isLoading}

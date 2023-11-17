@@ -23,7 +23,12 @@ interface PostCardProps {
     innerRef?: React.Ref<HTMLDivElement>;
 }
 
-const PostCard: FC<PostCardProps> = ({ data, currentUser, otherUsers, innerRef }) => {
+const PostCard: FC<PostCardProps> = ({
+    data,
+    currentUser,
+    otherUsers,
+    innerRef,
+}) => {
     const router = useRouter();
     const queryClient = useQueryClient();
 
@@ -38,10 +43,15 @@ const PostCard: FC<PostCardProps> = ({ data, currentUser, otherUsers, innerRef }
 
     const likeIds = data.likedIds;
 
-    if (otherUsers?.length > 0 && !otherUsers?.some((user) => user.id === currentUser?.id)) {
+    if (
+        otherUsers?.length > 0 &&
+        !otherUsers?.some((user) => user.id === currentUser?.id)
+    ) {
         otherUsers?.push(currentUser);
     }
-    const profileWithLikeIds = otherUsers?.filter((user) => likeIds.includes(user.id));
+    const profileWithLikeIds = otherUsers?.filter((user) =>
+        likeIds.includes(user.id),
+    );
 
     const postImages = data.images.map((image) => image.url);
 
@@ -56,7 +66,9 @@ const PostCard: FC<PostCardProps> = ({ data, currentUser, otherUsers, innerRef }
         mutationFn: () => deletePost(postData.postId),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['get-posts'] });
-            queryClient.invalidateQueries({ queryKey: ['get-posts-by-userId'] });
+            queryClient.invalidateQueries({
+                queryKey: ['get-posts-by-userId'],
+            });
             toast.success('Post deleted successfully');
             onClose();
         },
@@ -104,7 +116,7 @@ const PostCard: FC<PostCardProps> = ({ data, currentUser, otherUsers, innerRef }
                     <CommentInput post={data} currentUser={currentUser} />
                 </div>
                 {isComment && !!postCommentsWithProfiles.length && (
-                    <ScrollArea className='max-h-72 h-full flex flex-col items-center w-full gap-y-3 mb-4'>
+                    <ScrollArea className='max-h-72 h-full flex flex-col items-center w-full gap-y-3 mb-2'>
                         {postCommentsWithProfiles.map((comment) => (
                             <CommentItem
                                 data={comment}

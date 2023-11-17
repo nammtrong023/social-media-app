@@ -7,6 +7,7 @@ import { UserType } from '@/types';
 import { useModalStore } from '@/hooks/use-modals';
 import useConversationsApi from '@/api/conversations/use-conversations-api';
 import { useMutation } from '@tanstack/react-query';
+import { useEffect } from 'react';
 
 interface UserBoxProps {
     user: UserType;
@@ -23,18 +24,16 @@ const UserBox = ({ user }: UserBoxProps) => {
         onSuccess: () => {},
     });
 
-    const handleMutate = () => {
-        mutate();
-
+    useEffect(() => {
         if (data && isSuccess) {
             onClose();
             router.push(`/conversations/${data?.id}`);
         }
-    };
+    }, [data, isSuccess, onClose, router]);
 
     return (
         <div
-            onClick={() => handleMutate()}
+            onClick={() => mutate()}
             className='bg-white dark:bg-dark1 cursor-pointer hover:bg-gray78/10 flex items-center gap-x-[10px] h-full w-full p-3 rounded-lg'
         >
             <UserAvatar

@@ -55,7 +55,7 @@ export function ChatSidebar({ users, className, data }: TabProps) {
                 value='conversation'
                 className='h-[calc(100%-48px)] pb-20 lg:pb-0 w-full'
             >
-                {!!data?.length ? (
+                {data && data.length >= 0 ? (
                     <ConversationList data={data} />
                 ) : (
                     <UserInfoSkeleton />
@@ -67,11 +67,15 @@ export function ChatSidebar({ users, className, data }: TabProps) {
                 className='h-[calc(100%-48px)] pb-20 lg:pb-0 w-full'
             >
                 <ScrollArea className='flex flex-col gap-y-3 min-h-[425px] h-full w-full rounded-[10px]'>
-                    {!users && <UserInfoSkeleton />}
-
-                    {users?.map((user) => (
-                        <UserBox key={user.id} user={user} />
-                    ))}
+                    {!users ? (
+                        <UserInfoSkeleton />
+                    ) : (
+                        <>
+                            {users.map((user) => (
+                                <UserBox key={user.id} user={user} />
+                            ))}
+                        </>
+                    )}
                 </ScrollArea>
             </TabsContent>
         </Tabs>

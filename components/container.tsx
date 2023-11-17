@@ -1,12 +1,10 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { Suspense } from 'react';
 import { useAuth } from '@/components/providers/auth-provider';
 import MainSidebar from '@/components/sidebar/main-sidebar';
 import UserInfo from './user/user-info';
 import { useQuery } from '@tanstack/react-query';
-import { UserInfoSkeleton } from './skeleton/user-info-skeleton';
 import useUsersApi from '@/api/users/use-users-api';
 
 interface ContainerProps {
@@ -47,12 +45,7 @@ const Container = ({ className, showRightBar, children }: ContainerProps) => {
                     </h2>
                     <div className='mt-3 flex flex-col gap-1'>
                         {otherUsersQuery.data.map((user) => (
-                            <Suspense
-                                key={user.id}
-                                fallback={<UserInfoSkeleton />}
-                            >
-                                <UserInfo user={user} />
-                            </Suspense>
+                            <UserInfo key={user.id} user={user} />
                         ))}
                     </div>
                 </aside>

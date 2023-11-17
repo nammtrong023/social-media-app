@@ -5,9 +5,10 @@ import ConversationForm from './components/conversation-form';
 import ConversationHeader from './components/conversation-header';
 import { ChatSidebar } from '@/components/sidebar/chat-sidebar';
 import useConversationsApi from '@/api/conversations/use-conversations-api';
-import { useQueries } from '@tanstack/react-query';
+import { useQueries, useQuery } from '@tanstack/react-query';
 import useOtherUsers from '@/hooks/use-other-user';
 import ConversationBody from './components/conversation-body';
+import { redirect } from 'next/navigation';
 
 const ConversationIdPage = ({
     params,
@@ -17,22 +18,18 @@ const ConversationIdPage = ({
     const otherUsers = useOtherUsers();
     const { getConversations, getConversationById } = useConversationsApi();
 
-    const data = useQueries({
-        queries: [
-            {
-                queryKey: ['get-conversation'],
-                queryFn: () => getConversationById(params.conversationId),
-            },
-            {
-                queryKey: ['get-conversations'],
-                queryFn: getConversations,
-            },
-        ],
+    const { data: conversation, isFetching } = useQuery({
+        queryKey: ['get-conversation'],
+        queryFn: () => getConversationById(params.conversationId),
+    });
+    const { data: conversations } = useQuery({
+        queryKey: ['get-conversations'],
+        queryFn: getConversations,
     });
 
-    const conversation = data[0].data;
-
-    const conversations = data[1].data;
+    if (!conversation && !isFetching) {
+        return redirect('/conversations');
+    }
 
     return (
         <>

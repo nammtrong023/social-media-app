@@ -1,19 +1,11 @@
 'use client';
 
-import axios from 'axios';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import * as z from 'zod';
 import jwt from 'jsonwebtoken';
 import { redirect, useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/components/providers/auth-provider';
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormMessage,
-} from '@/components/ui/form';
 import { Loader2, Lock } from 'lucide-react';
 import { useMutation } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
@@ -22,6 +14,13 @@ import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { useAuthApi } from '@/api/auth/use-auth-api';
 import { LoginFormType } from '../sign-in/page';
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormMessage,
+} from '@/components/ui/form';
 
 const formSchema = z.object({
     newPassword: z.string().min(6, 'Tối thiểu 6 ký tự'),
@@ -110,8 +109,8 @@ const ConfirmationPage = () => {
 
         const data = {
             resetToken,
-            newPassword: newPassword,
-            confirmNewPassword: confirmNewPassword,
+            newPassword,
+            confirmNewPassword,
         };
 
         mutate(data);

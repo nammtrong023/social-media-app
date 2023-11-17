@@ -20,20 +20,21 @@ export default function Home() {
     const { getPosts } = usePostsApi();
     const { ref, inView } = useInView();
 
-    const { data, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
-        queryKey: ['get-posts'],
-        queryFn: getPosts,
-        initialPageParam: 1,
-        getNextPageParam: (lastPage, pages) => {
-            if (lastPage.length === 0) {
-                return undefined;
-            }
+    const { data, fetchNextPage, isFetchingNextPage, hasNextPage } =
+        useInfiniteQuery({
+            queryKey: ['get-posts'],
+            queryFn: getPosts,
+            initialPageParam: 1,
+            getNextPageParam: (lastPage, pages) => {
+                if (lastPage.length === 0) {
+                    return undefined;
+                }
 
-            return pages.length + 1;
-        },
-        refetchInterval: 10000,
-        maxPages: 5,
-    });
+                return pages.length + 1;
+            },
+            refetchInterval: 10000,
+            maxPages: 5,
+        });
 
     useEffect(() => {
         if (inView && hasNextPage) {
@@ -45,7 +46,9 @@ export default function Home() {
         return <Loading />;
     }
 
-    const otherUsersFilter = otherUsers.filter((user) => user.email !== currentUser.email);
+    const otherUsersFilter = otherUsers.filter(
+        (user) => user.email !== currentUser.email,
+    );
 
     return (
         <Container showRightBar>
@@ -57,7 +60,9 @@ export default function Home() {
                         <PostCard
                             key={post.id}
                             data={post}
-                            innerRef={postIndex === posts.length - 1 ? ref : undefined}
+                            innerRef={
+                                postIndex === posts.length - 1 ? ref : undefined
+                            }
                             currentUser={currentUser}
                             otherUsers={otherUsersFilter}
                         />

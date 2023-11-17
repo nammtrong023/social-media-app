@@ -3,7 +3,13 @@ import { useCallback, useMemo } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import useAxiosPrivate from './use-axios-private';
 
-const useLike = (postId: string, currentUser: UserType, fetchedPost: PostType) => {
+const baseUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/posts`;
+
+const useLike = (
+    postId: string,
+    currentUser: UserType,
+    fetchedPost: PostType,
+) => {
     const queryClient = useQueryClient();
     const axiosPrivate = useAxiosPrivate();
 
@@ -17,19 +23,17 @@ const useLike = (postId: string, currentUser: UserType, fetchedPost: PostType) =
         mutationKey: ['like'],
         mutationFn: async () => {
             if (hasLiked) {
-                return await axiosPrivate.patch(
-                    `${process.env.NEXT_PUBLIC_BASE_URL}/posts/unlike/${postId}`,
-                );
+                return await axiosPrivate.patch(`${baseUrl}/unlike/${postId}`);
             } else {
-                return await axiosPrivate.post(
-                    `${process.env.NEXT_PUBLIC_BASE_URL}/posts/like/${postId}`,
-                );
+                return await axiosPrivate.post(`${baseUrl}/like/${postId}`);
             }
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['get-posts'] });
             queryClient.invalidateQueries({ queryKey: ['get-post-by-id'] });
-            queryClient.invalidateQueries({ queryKey: ['get-posts-by-userId'] });
+            queryClient.invalidateQueries({
+                queryKey: ['get-posts-by-userId'],
+            });
         },
     });
 

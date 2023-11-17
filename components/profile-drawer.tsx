@@ -4,15 +4,15 @@ import InfoIcon from './icon/info-icon';
 import { Trash } from 'lucide-react';
 import UserAvatar from './user/user-avatar';
 import { Sheet, SheetContent, SheetTrigger } from './ui/sheet';
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import axios from 'axios';
 import { toast } from 'sonner';
 import useActiveList from '@/hooks/use-active-list';
 import { ConversationType, UserType } from '@/types';
 import { useModalStore } from '@/hooks/use-modals';
 import { AlertModal } from './modals/alert-modal';
 import useConversationsApi from '@/api/conversations/use-conversations-api';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useCallback, useEffect } from 'react';
 
 interface ProfileDrawerProps {
     user: UserType | undefined;
@@ -21,8 +21,8 @@ interface ProfileDrawerProps {
 
 const ProfileDrawer = ({ user, conversation }: ProfileDrawerProps) => {
     const router = useRouter();
+    const queryClient = useQueryClient();
 
-    const [isLoading, setIsLoading] = useState(false);
     const { deleteConversation } = useConversationsApi();
 
     const { members } = useActiveList();
@@ -35,21 +35,28 @@ const ProfileDrawer = ({ user, conversation }: ProfileDrawerProps) => {
         router.push(`/profiles/${user?.id}`);
     };
 
-    const handleDelete = async () => {
-        try {
-            setIsLoading(true);
-            deleteConversation(conversation?.id);
-
+    const { isSuccess, isPending, mutate } = useMutation({
+        mutationKey: ['delete-conversation'],
+        mutationFn: () => deleteConversation(conversation?.id),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['get-conversations'] });
             toast.success('Thành công');
-            router.push('/conversations');
-        } catch (error) {
-            toast.error('Thất bại');
-            console.log(error);
-        } finally {
-            setIsLoading(false);
-            onClose();
+        },
+        onError: () => toast.error('Thất bại'),
+    });
+
+    const handleDelete = useCallback(() => {
+        if (conversation) {
+            mutate();
         }
-    };
+    }, [conversation, mutate]);
+
+    useEffect(() => {
+        if (isSuccess) {
+            onClose();
+            router.push('/conversations');
+        }
+    }, [isSuccess, onClose, router]);
 
     if (!user || !conversation) return null;
 
@@ -104,7 +111,7 @@ const ProfileDrawer = ({ user, conversation }: ProfileDrawerProps) => {
             </Sheet>
             <AlertModal
                 title='Xoá đoạn chat'
-                loading={isLoading}
+                loading={isPending}
                 isOpen={isModalOpen}
                 onClose={onClose}
                 onConfirm={handleDelete}

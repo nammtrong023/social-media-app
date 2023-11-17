@@ -63,7 +63,8 @@ const CreatePostModal = ({ currentUser }: { currentUser: UserType }) => {
         }
     }, [form, initialData]);
 
-    const validatePost = !initialData.images.length && !form.getValues('images').length;
+    const validatePost =
+        !initialData.images.length && !form.getValues('images').length;
 
     const mutation = useMutation({
         mutationKey: ['create-post'],
@@ -75,9 +76,10 @@ const CreatePostModal = ({ currentUser }: { currentUser: UserType }) => {
             return createPost(postData);
         },
         onSuccess: () => {
-            router.refresh();
             queryClient.invalidateQueries({ queryKey: ['get-posts'] });
-            queryClient.invalidateQueries({ queryKey: ['get-posts-by-userId'] });
+            queryClient.invalidateQueries({
+                queryKey: ['get-posts-by-userId'],
+            });
             toast.success('Success');
             onClose();
         },
@@ -104,7 +106,10 @@ const CreatePostModal = ({ currentUser }: { currentUser: UserType }) => {
     return (
         <Dialog open={isOpenPostCreate} onOpenChange={onClose}>
             <DialogContent
-                className={cn('bg-white dark:bg-dark1', mutation.isPending && 'select-none')}
+                className={cn(
+                    'bg-white dark:bg-dark1',
+                    mutation.isPending && 'select-none',
+                )}
             >
                 <div className='bg-white dark:bg-dark1 sm:max-w-[512px] overflow-x-hidden w-full h-fit'>
                     <DialogTitle className='font-bold title-base title-textGray mb-2'>
@@ -112,7 +117,10 @@ const CreatePostModal = ({ currentUser }: { currentUser: UserType }) => {
                     </DialogTitle>
                     <hr className='dark:border-dark3' />
                     <div className='pb-0 w-full h-fit max-h-[500px] overflow-auto'>
-                        <UserInfo user={currentUser} className='md:hidden my-2' />
+                        <UserInfo
+                            user={currentUser}
+                            className='md:hidden my-2'
+                        />
                         <Form {...form}>
                             <form
                                 onSubmit={form.handleSubmit(onSubmit)}
@@ -133,11 +141,17 @@ const CreatePostModal = ({ currentUser }: { currentUser: UserType }) => {
                                                 <FormControl>
                                                     <>
                                                         <Textarea
-                                                            value={field.value || ''}
-                                                            onChange={(e) =>
-                                                                field.onChange(e.target.value)
+                                                            value={
+                                                                field.value ||
+                                                                ''
                                                             }
-                                                            placeholder={`What's on your mind? ${currentUser.name}`}
+                                                            onChange={(e) =>
+                                                                field.onChange(
+                                                                    e.target
+                                                                        .value,
+                                                                )
+                                                            }
+                                                            placeholder={`Bạn đang nghĩ gì? ${currentUser.name}`}
                                                             className='min-h-[110px] resize-none min-w-[270px] sm:min-w-[350px]  bg-gray78/5 dark:bg-dark2/50 px-3 pr-9 py-2 outline-none rounded-lg dark:border-dark3 relative'
                                                             maxLength={200}
                                                             rows={3}
@@ -145,7 +159,9 @@ const CreatePostModal = ({ currentUser }: { currentUser: UserType }) => {
                                                         <span className='absolute right-3 top-0'>
                                                             <EmojiPicker
                                                                 size={20}
-                                                                onChange={(emoji: string) =>
+                                                                onChange={(
+                                                                    emoji: string,
+                                                                ) =>
                                                                     field.onChange(
                                                                         `${field.value} ${emoji}`,
                                                                     )
@@ -168,9 +184,12 @@ const CreatePostModal = ({ currentUser }: { currentUser: UserType }) => {
                                                     value={field.value}
                                                     onChange={field.onChange}
                                                     onRemove={(prevImg) => {
-                                                        const images = field.value.filter(
-                                                            (image) => image !== prevImg,
-                                                        );
+                                                        const images =
+                                                            field.value.filter(
+                                                                (image) =>
+                                                                    image !==
+                                                                    prevImg,
+                                                            );
                                                         field.onChange(images);
                                                     }}
                                                 />
@@ -179,7 +198,9 @@ const CreatePostModal = ({ currentUser }: { currentUser: UserType }) => {
                                     )}
                                 />
                                 <Button
-                                    disabled={validatePost || mutation.isPending}
+                                    disabled={
+                                        validatePost || mutation.isPending
+                                    }
                                     variant='blue'
                                     type='submit'
                                     className='mt-3 px-5 py-3 select-none title-center w-full md:min-w-[80px] md:max-w-fit md:flex ml-auto'

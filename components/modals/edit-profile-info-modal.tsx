@@ -59,7 +59,8 @@ export function EditProfileInfoModal({ initialData }: ProfileFormProps) {
     const profileId = params.profileId as string;
 
     const [isOpen, setIsOpen] = useState(false);
-    const [errorDateField, setErrorDateField] = useState<DateValidationError | null>(null);
+    const [errorDateField, setErrorDateField] =
+        useState<DateValidationError | null>(null);
 
     const form = useForm<ProfileFormValues>({
         resolver: zodResolver(formSchema),
@@ -71,8 +72,6 @@ export function EditProfileInfoModal({ initialData }: ProfileFormProps) {
             bio: initialData?.bio || '',
         },
     });
-
-    const sds = form.getValues('birth');
 
     const { mutate, isPending } = useMutation({
         mutationKey: ['update-user-info'],
@@ -107,7 +106,9 @@ export function EditProfileInfoModal({ initialData }: ProfileFormProps) {
             </DialogTrigger>
             <DialogContent className='max-w-[712px] w-full inline-block dark:bg-dark1'>
                 <DialogHeader className='mb-5'>
-                    <DialogTitle onClick={() => form.reset()}>Chỉnh sửa thông tin</DialogTitle>
+                    <DialogTitle onClick={() => form.reset()}>
+                        Chỉnh sửa thông tin
+                    </DialogTitle>
                 </DialogHeader>
                 <Separator />
                 <div className='h-fit bg-white dark:bg-dark1 px-5'>
@@ -145,7 +146,9 @@ export function EditProfileInfoModal({ initialData }: ProfileFormProps) {
                                             <FormLabel>Ngày sinh</FormLabel>
                                             <DateFieldForm
                                                 error={errorDateField}
-                                                onError={(newError) => setErrorDateField(newError)}
+                                                onError={(newError) =>
+                                                    setErrorDateField(newError)
+                                                }
                                                 field={field}
                                                 onChange={(date) => {
                                                     field.onChange(date);
@@ -155,15 +158,21 @@ export function EditProfileInfoModal({ initialData }: ProfileFormProps) {
                                                         borderRadius: '6px',
                                                         height: '40px',
                                                         color:
-                                                            theme === 'dark' ? 'white' : '#4e5d78',
+                                                            theme === 'dark'
+                                                                ? 'white'
+                                                                : '#4e5d78',
                                                     },
                                                     '& .MuiSvgIcon-root': {
                                                         color:
-                                                            theme === 'dark' ? 'white' : '#4e5d78',
+                                                            theme === 'dark'
+                                                                ? 'white'
+                                                                : '#4e5d78',
                                                     },
-                                                    '& .MuiOutlinedInput-notchedOutline': {
-                                                        borderColor: '#4e5d78',
-                                                    },
+                                                    '& .MuiOutlinedInput-notchedOutline':
+                                                        {
+                                                            borderColor:
+                                                                '#4e5d78',
+                                                        },
                                                     '& .css-dt8m01-MuiFormHelperText-root.Mui-error':
                                                         {
                                                             color: '#FF5630',
@@ -205,8 +214,13 @@ export function EditProfileInfoModal({ initialData }: ProfileFormProps) {
                                     name='gender'
                                     render={({ field }) => (
                                         <FormItem className='h-[72px] w-full sm:w-[240px]'>
-                                            <FormLabel className='mb-auto'>Giới tính</FormLabel>
-                                            <RadioGroupForm field={field} disabled={isPending} />
+                                            <FormLabel className='mb-auto'>
+                                                Giới tính
+                                            </FormLabel>
+                                            <RadioGroupForm
+                                                field={field}
+                                                disabled={isPending}
+                                            />
                                             <FormMessage />
                                         </FormItem>
                                     )}
@@ -226,7 +240,11 @@ export function EditProfileInfoModal({ initialData }: ProfileFormProps) {
                                                 className='resize-none'
                                                 maxLength={100}
                                                 value={field.value || ''}
-                                                onChange={(e) => field.onChange(e.target.value)}
+                                                onChange={(e) =>
+                                                    field.onChange(
+                                                        e.target.value,
+                                                    )
+                                                }
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -235,7 +253,9 @@ export function EditProfileInfoModal({ initialData }: ProfileFormProps) {
                             />
                             <div className='w-full text-right mt-12'>
                                 <Button
-                                    disabled={isPending || errorDateField !== null}
+                                    disabled={
+                                        isPending || errorDateField !== null
+                                    }
                                     variant='blue'
                                     type='submit'
                                     className='sm:w-fit w-full'

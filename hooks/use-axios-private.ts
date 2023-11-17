@@ -3,13 +3,12 @@
 import dayjs from 'dayjs';
 import axios from 'axios';
 import jwt from 'jsonwebtoken';
-import { setCookie } from 'cookies-next';
 import { useAuth } from '@/components/providers/auth-provider';
 
 const baseURL = process.env.NEXT_PUBLIC_BASE_URL;
 
 const useAxiosPrivate = () => {
-    const { authToken, setAuthToken } = useAuth();
+    const { authToken, handleCookies } = useAuth();
 
     const axiosPrivate = axios.create({
         baseURL,
@@ -20,7 +19,8 @@ const useAxiosPrivate = () => {
     });
 
     axiosPrivate.interceptors.request.use(async (req) => {
-        const user: any = authToken?.accessToken && jwt.decode(authToken?.accessToken);
+        const user: any =
+            authToken?.accessToken && jwt.decode(authToken?.accessToken);
 
         const currentTime = dayjs();
         const expirationTime = dayjs.unix(user.exp);
@@ -37,12 +37,7 @@ const useAxiosPrivate = () => {
             },
         });
 
-        setCookie('access_token', data.accessToken);
-        setCookie('refresh_token', data.refreshToken);
-        setAuthToken({
-            accessToken: data.accessToken,
-            refreshToken: data.refreshToken,
-        });
+        handleCookies(data);
         req.headers.Authorization = `Bearer ${data.accessToken}`;
 
         return req;

@@ -15,7 +15,6 @@ export const PostCardSkeleton = () => {
                 <Skeleton className='w-12 h-12 rounded-full flex-shrink-0' />
                 <Skeleton className='w-full h-8' />
             </div>
-            {/* <Skeleton className='w-full h-8' /> */}
         </div>
     );
 };

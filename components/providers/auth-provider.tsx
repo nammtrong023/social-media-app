@@ -36,7 +36,7 @@ const AuthContext = createContext<ContextDataType>({
         accessToken,
         refreshToken,
     },
-    handleCookies: (data: Tokens) => {},
+    handleCookies: () => {},
     isFetching: null,
     setAuthToken: () => {},
     setCurrentUser: () => {},

@@ -8,7 +8,7 @@ import { useChatScroll } from '@/hooks/use-chat-scroll';
 import { ArrowDown, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { useScrollToBottom } from '@/hooks/scroll-to-bottom';
+import { useScrollToBottom } from '@/hooks/use-scroll-to-bottom';
 
 const ConversationBody = () => {
     const chatRef = useRef<HTMLDivElement>(null);

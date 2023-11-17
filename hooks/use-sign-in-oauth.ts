@@ -34,10 +34,10 @@ export const useSignInOauth = () => {
                 handleCookies(data);
             } catch (error) {
                 console.log(error);
+                setisLoading(false);
             } finally {
                 router.refresh();
                 router.push('/');
-                setisLoading(false);
             }
         },
         [handleCookies, router, setisLoading],

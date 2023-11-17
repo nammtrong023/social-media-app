@@ -8,9 +8,5 @@ export const ModalProvider = () => {
 
     if (!currentUser) return;
 
-    return (
-        <>
-            <CreatePostModal currentUser={currentUser} />
-        </>
-    );
+    return <CreatePostModal currentUser={currentUser} />;
 };

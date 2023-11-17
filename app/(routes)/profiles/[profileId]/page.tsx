@@ -10,9 +10,9 @@ import GenderIcon from '@/components/icon/gender-icon';
 import Heading from '@/components/heading';
 import { EditProfileInfoModal } from '@/components/modals/edit-profile-info-modal';
 import { ProfileHeader } from './components/profile-header';
-import { Suspense, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useInfiniteQuery, useQueries, useQuery } from '@tanstack/react-query';
-import { PostType } from '@/types';
+import { Gender, PostType } from '@/types';
 import Loading from './loading';
 import { UserListModal } from '@/components/modals/user-list-modal';
 import useUsersApi from '@/api/users/use-users-api';
@@ -88,6 +88,14 @@ const ProfilePage = ({ params }: { params: { profileId: string } }) => {
         return <Loading />;
     }
 
+    const isShowInfo = (values: Gender | Date | null): boolean => {
+        if (user.id === currentUser.id) return true;
+
+        if (user.id !== currentUser.id && values !== null) return true;
+
+        return false;
+    };
+
     return (
         <Container className='lg:pr-[30px]' showRightBar={false}>
             <div className='w-full'>
@@ -101,28 +109,32 @@ const ProfilePage = ({ params }: { params: { profileId: string } }) => {
                             </p>
                         )}
                         <ul className='space-y-4 mt-6 mb-4'>
-                            <ListItem>
-                                <GenderIcon />
-                                <p>
-                                    {user.gender === 'MALE'
-                                        ? 'Nam'
-                                        : user.gender === 'FEMALE'
-                                        ? 'Nữ'
-                                        : 'Thêm giới tính của bạn'}
-                                </p>
-                            </ListItem>
+                            {isShowInfo(user.gender) && (
+                                <ListItem>
+                                    <GenderIcon />
+                                    <p>
+                                        {user.gender === 'MALE'
+                                            ? 'Nam'
+                                            : user.gender === 'FEMALE'
+                                            ? 'Nữ'
+                                            : 'Thêm giới tính của bạn'}
+                                    </p>
+                                </ListItem>
+                            )}
 
-                            <ListItem>
-                                <BirthIcon />
-                                <p>
-                                    {user.birth
-                                        ? format(
-                                              new Date(user.birth),
-                                              'dd/MM/yyyy',
-                                          )
-                                        : 'Thêm ngày sinh của bạn'}
-                                </p>
-                            </ListItem>
+                            {isShowInfo(user.birth) && (
+                                <ListItem>
+                                    <BirthIcon />
+                                    <p>
+                                        {user.birth
+                                            ? format(
+                                                  new Date(user.birth),
+                                                  'dd/MM/yyyy',
+                                              )
+                                            : 'Thêm ngày sinh của bạn'}
+                                    </p>
+                                </ListItem>
+                            )}
 
                             <ListItem>
                                 <UserListModal

@@ -13,10 +13,13 @@ interface RadioGroupFormProps {
     };
     disabled: boolean;
     className?: string;
-    color?: string;
 }
 
-export function RadioGroupForm({ field, disabled, className, color }: RadioGroupFormProps) {
+export function RadioGroupForm({
+    field,
+    disabled,
+    className,
+}: RadioGroupFormProps) {
     return (
         <FormControl className={cn('mr-auto w-[240px] !mt-5', className)}>
             <RadioGroup
@@ -25,18 +28,22 @@ export function RadioGroupForm({ field, disabled, className, color }: RadioGroup
                 className='flex items-center gap-x-5'
                 disabled={disabled}
             >
-                <GenderIcon color={color} />
+                <GenderIcon />
                 <FormItem className='flex items-center space-x-3 space-y-0'>
                     <FormControl>
                         <RadioGroupItem value='MALE' />
                     </FormControl>
-                    <FormLabel className='cursor-pointer text-base'>Nam</FormLabel>
+                    <FormLabel className='cursor-pointer text-base'>
+                        Nam
+                    </FormLabel>
                 </FormItem>
                 <FormItem className='flex items-center space-x-3 space-y-0'>
                     <FormControl>
                         <RadioGroupItem value='FEMALE' />
                     </FormControl>
-                    <FormLabel className='cursor-pointer text-base'>Nữ</FormLabel>
+                    <FormLabel className='cursor-pointer text-base'>
+                        Nữ
+                    </FormLabel>
                 </FormItem>
             </RadioGroup>
         </FormControl>

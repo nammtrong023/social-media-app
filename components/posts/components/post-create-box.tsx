@@ -16,10 +16,13 @@ export const PostCreateBox = ({ currentUser }: { currentUser: UserType }) => {
 
     return (
         <div className='bg-white dark:bg-dark1 p-[18px] min-w-[320px] space-y-3 min-[550px]:max-w-[512px] w-full h-fit rounded-xl backdrop-opacity-5 z-40'>
-            <Heading title='Create new post' />
+            <Heading title='Tạo bài viết mới' />
             <div className='flex items-center gap-x-3'>
                 <Link href={`/profiles/${currentUser.id}`}>
-                    <UserAvatar src={currentUser.profileImage} username={currentUser.name} />
+                    <UserAvatar
+                        src={currentUser.profileImage}
+                        username={currentUser.name}
+                    />
                 </Link>
                 <div
                     onClick={handleResetForm}

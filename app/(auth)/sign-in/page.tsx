@@ -1,7 +1,6 @@
 'use client';
 import Link from 'next/link';
 import GoogleIcon from '@/components/icon/google-icon';
-import axios from 'axios';
 import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
@@ -11,9 +10,11 @@ import { useEffect } from 'react';
 import { toast } from 'sonner';
 import { Separator } from '@/components/ui/separator';
 import { Input } from '@/components/ui/input';
-import { Tokens } from '@/types';
 import { Button } from '@/components/ui/button';
 import { AtSignIcon, Loader2, Lock } from 'lucide-react';
+import { useAuth } from '@/components/providers/auth-provider';
+import { useSignInOauth } from '@/hooks/use-sign-in-oauth';
+import { useAuthApi } from '@/api/auth/use-auth-api';
 import {
     Form,
     FormControl,
@@ -21,9 +22,6 @@ import {
     FormItem,
     FormMessage,
 } from '@/components/ui/form';
-import { useAuth } from '@/components/providers/auth-provider';
-import { useSignInOauth } from '@/hooks/use-sign-in-oauth';
-import { useAuthApi } from '@/api/auth/use-auth-api';
 
 const formSchema = z.object({
     email: z.string().min(1, 'Vui lòng nhập email').email('Email không hợp lệ'),
@@ -31,8 +29,6 @@ const formSchema = z.object({
 });
 
 export type LoginFormType = z.infer<typeof formSchema>;
-
-const baseUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/auth`;
 
 const LoginPage = () => {
     const router = useRouter();
