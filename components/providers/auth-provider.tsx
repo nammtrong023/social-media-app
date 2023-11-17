@@ -6,13 +6,20 @@ import { useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { getCookie, setCookie } from 'cookies-next';
 import jwt from 'jsonwebtoken';
-import React, { createContext, useContext, useEffect, useState } from 'react';
 import dayjs from 'dayjs';
+import React, {
+    createContext,
+    useCallback,
+    useContext,
+    useEffect,
+    useState,
+} from 'react';
 
 type ContextDataType = {
     currentUser: UserType | undefined;
     authToken: Tokens | undefined;
     isFetching: boolean | null;
+    handleCookies: (data: Tokens) => void;
     setAuthToken: (authToken: Tokens) => void;
     setCurrentUser: (currentUser: UserType | undefined) => void;
     logout: () => void;
@@ -29,6 +36,7 @@ const AuthContext = createContext<ContextDataType>({
         accessToken,
         refreshToken,
     },
+    handleCookies: (data: Tokens) => {},
     isFetching: null,
     setAuthToken: () => {},
     setCurrentUser: () => {},
@@ -48,7 +56,8 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     });
 
     let isExpired = true;
-    const user: any = authToken?.accessToken && jwt.decode(authToken.accessToken);
+    const user: any =
+        authToken?.accessToken && jwt.decode(authToken.accessToken);
 
     if (user && typeof user !== 'string' && user.exp !== undefined) {
         isExpired = dayjs.unix(user.exp).diff(dayjs()) < 1;
@@ -82,6 +91,19 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
     }, [authToken?.accessToken, data, isSuccess]);
 
+    const handleCookies = useCallback(
+        (data: Tokens) => {
+            setCookie('access_token', data?.accessToken);
+            setCookie('refresh_token', data?.refreshToken);
+
+            setAuthToken({
+                accessToken: data?.accessToken,
+                refreshToken: data?.refreshToken,
+            });
+        },
+        [setAuthToken],
+    );
+
     const logout = () => {
         setCurrentUser(undefined);
         setAuthToken(undefined);
@@ -95,11 +117,16 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         currentUser,
         isFetching,
         setAuthToken,
+        handleCookies,
         logout,
         setCurrentUser,
     };
 
-    return <AuthContext.Provider value={contextData}>{children}</AuthContext.Provider>;
+    return (
+        <AuthContext.Provider value={contextData}>
+            {children}
+        </AuthContext.Provider>
+    );
 };
 
 export default AuthProvider;

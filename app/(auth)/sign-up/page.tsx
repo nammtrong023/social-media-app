@@ -12,7 +12,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 import { RadioGroupForm } from '@/components/ui/radio-form';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import {
     Form,
     FormControl,
@@ -28,11 +28,12 @@ import { useMediaQuery } from '@mui/material';
 import { useTheme } from 'next-themes';
 import { useRouter } from 'next/navigation';
 import { Gender } from '@/types';
+import { useSignInOauth } from '@/hooks/use-sign-in-oauth';
 
 const formSchema = z.object({
     name: z.string().min(5, 'Tối thiểu 5 ký tự'),
     password: z.string().min(6, 'Tối thiểu 6 ký tự'),
-    email: z.string().email('Email không hợp lệ'),
+    email: z.string().min(1, 'Vui lòng nhập email').email('Email không hợp lệ'),
     birth: z.date({
         required_error: 'Vui lòng chọn ngày sinh',
         invalid_type_error: 'Vui lòng chọn ngày sinh',
@@ -42,52 +43,45 @@ const formSchema = z.object({
     }),
 });
 
-type ProfileFormValues = z.infer<typeof formSchema>;
+type RegisterFormType = z.infer<typeof formSchema>;
 
-interface ProfileFormProps {
-    initialData: ProfileFormValues;
-}
+const baseUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/auth/register`;
 
-const RegisterPage = ({ initialData }: ProfileFormProps) => {
+const RegisterPage = () => {
     const router = useRouter();
     const { theme } = useTheme();
-
-    const queryClient = useQueryClient();
     const isLaptop = useMediaQuery('(min-width:1024px)');
 
-    const [isLoading, setisLoading] = useState(false);
+    const { isLoading, setisLoading, signInWithOauth } = useSignInOauth();
     const [errorDateField, setErrorDateField] =
         useState<DateValidationError | null>(null);
 
-    const form = useForm<ProfileFormValues>({
+    const form = useForm<RegisterFormType>({
         resolver: zodResolver(formSchema),
-        defaultValues: initialData || {
+        defaultValues: {
             name: '',
-            birth: null,
+            birth: undefined,
             email: '',
             password: '',
-            gender: null,
+            gender: undefined,
         },
     });
 
     const mutation = useMutation({
-        mutationFn: async (values: ProfileFormValues) => {
-            return await axios.post(
-                `${process.env.NEXT_PUBLIC_BASE_URL}/auth/register`,
-                values,
-            );
+        mutationFn: async (values: RegisterFormType) => {
+            return await axios.post(baseUrl, values);
         },
         onSuccess: () => {
             toast.success('Thành công');
             router.push('/sign-in');
         },
-        onError: (error: Error) => {
+        onError: () => {
             setisLoading(false);
             toast.error('Email đã tồn tại!');
         },
     });
 
-    const onSubmit = async (values: ProfileFormValues) => {
+    const onSubmit = async (values: RegisterFormType) => {
         setisLoading(true);
         mutation.mutate(values);
     };
@@ -98,7 +92,7 @@ const RegisterPage = ({ initialData }: ProfileFormProps) => {
                 <h1 className=' font-bold text-lg lg:text-3xl'>
                     Đăng ký tài khoản
                 </h1>
-                <p className=' font-medium text-sm lg:text-base text-center'>
+                <p className='font-medium text-sm lg:text-base text-center'>
                     Tạo tài khoản để tiếp tục và kết nối với mọi người.
                 </p>
             </div>
@@ -112,11 +106,12 @@ const RegisterPage = ({ initialData }: ProfileFormProps) => {
                 <div className='flex items-center'>
                     <Button
                         variant='ghost'
+                        onClick={() => signInWithOauth()}
                         className='py-18 pl-4 bg-gray78/5 dark:bg-gray78 h-10 lg:h-[52px] rounded-[10px] w-full'
                     >
                         <GoogleIcon />
                         <span className='ml-5 text-sm lg:text-base font-semibold '>
-                            Đăng nhập Google
+                            Đăng nhập với Google
                         </span>
                     </Button>
                 </div>
@@ -124,7 +119,7 @@ const RegisterPage = ({ initialData }: ProfileFormProps) => {
                 <div className='flex items-center'>
                     <Separator className='w-1/2 h-[1px] shrink dark:bg-gray78' />
                     <span className='px-5 text-sm lg:text-lg font-bold '>
-                        OR
+                        Hoặc
                     </span>
                     <Separator className='w-1/2 h-[1px] shrink dark:bg-gray78' />
                 </div>
@@ -141,7 +136,7 @@ const RegisterPage = ({ initialData }: ProfileFormProps) => {
                             name='email'
                             render={({ field }) => (
                                 <FormItem className='w-full relative'>
-                                    <AtSignIcon className='w-4 h-4  absolute left-5 top-[11px] lg:top-[19px] font-bold' />
+                                    <AtSignIcon className='w-4 h-4 absolute left-5 top-[11px] lg:top-[19px] font-bold' />
                                     <FormControl>
                                         <Input
                                             className='h-10 lg:h-[52px] rounded-md lg:rounded-[10px] pl-11 !m-0 text-sm bg-transparent dark:bg-dark2'
@@ -282,9 +277,9 @@ const RegisterPage = ({ initialData }: ProfileFormProps) => {
                         </Button>
                     </form>
                 </Form>
-                <div className='flex items-center justify-center gap-x-[19px]  text-sm md:text-base font-medium mt-[30px]'>
+                <div className='flex items-center justify-center text-sm md:text-base font-medium mt-[30px]'>
                     Bạn đã có tài khoản?
-                    <Link href='/sign-in' className='text-[#377DFF]'>
+                    <Link href='/sign-in' className='ml-2 text-[#377DFF]'>
                         Đăng nhập
                     </Link>
                 </div>

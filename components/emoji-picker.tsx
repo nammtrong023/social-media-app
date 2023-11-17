@@ -21,7 +21,10 @@ const EmojiPicker = ({ onChange, size = 16 }: EmojiPickerProps) => {
                 sideOffset={40}
                 className='bg-transparent border-none shadow-none drop-shadow-none mb-16 w-fit'
             >
-                <Picker data={data} onEmojiSelect={(emoji: any) => onChange(emoji.native)} />
+                <Picker
+                    data={data}
+                    onEmojiSelect={(emoji: any) => onChange(emoji.native)}
+                />
             </PopoverContent>
         </Popover>
     );

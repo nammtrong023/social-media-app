@@ -14,9 +14,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
         <div className='flex flex-col w-full h-full'>
             <div className='bg-white dark:bg-dark1 fixed z-50 top-0 left-0 right-0 w-full py-6 px-5 h-[78px] flex items-center justify-between'>
                 <div className='flex items-center'>
-                    <Link href='/'>
-                        <Logo />
-                    </Link>
+                    <Logo />
                 </div>
                 <ModeToggle />
             </div>

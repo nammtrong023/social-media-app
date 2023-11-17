@@ -81,11 +81,18 @@ export const ImageUpload: FC<ImageUploadProps> = ({
     return (
         <Dialog open={isModalOpen} onOpenChange={onClose}>
             <DialogContent
-                className={cn('w-full', isCoverImage ? 'max-w-4xl' : 'sm:max-w-[425px]')}
+                className={cn(
+                    'w-full',
+                    isCoverImage ? 'max-w-4xl' : 'sm:max-w-[425px]',
+                )}
             >
                 <DialogHeader>
                     <DialogTitle>
-                        {isProfileImage ? 'Ảnh đại diện' : isCoverImage ? 'Ảnh nền' : 'Hình ảnh'}
+                        {isProfileImage
+                            ? 'Ảnh đại diện'
+                            : isCoverImage
+                            ? 'Ảnh nền'
+                            : 'Hình ảnh'}
                     </DialogTitle>
                 </DialogHeader>
                 <Separator />
@@ -146,7 +153,11 @@ export const ImageUpload: FC<ImageUploadProps> = ({
                         onClick={onSubmit}
                         className='flex items-center justify-center'
                     >
-                        {loading ? <Loader2 className='w-4 h-4 animate-spin' /> : 'Tải ảnh'}
+                        {loading ? (
+                            <Loader2 className='w-4 h-4 animate-spin' />
+                        ) : (
+                            'Tải ảnh'
+                        )}
                     </Button>
                 </DialogFooter>
             </DialogContent>

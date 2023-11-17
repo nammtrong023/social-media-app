@@ -6,15 +6,16 @@ import type { NextRequest } from 'next/server';
 export async function middleware(request: NextRequest) {
     const path = request.nextUrl.pathname;
 
-    const publicPath = path === '/sign-in' || path === '/sign-up' || path === '/verifyemail';
-
+    const publicPath =
+        path === '/sign-in' || path === '/sign-up' || path === '/verify-email';
+        
     const accessToken = request.cookies.get('access_token')?.value || '';
 
     let isExpired = true;
 
     const user = accessToken && jwt.decode(accessToken);
 
-    if (user && typeof user !== 'string' && user.exp !== undefined) {
+    if (user && typeof user !== 'string' && user.exp) {
         isExpired = dayjs.unix(user.exp).diff(dayjs()) < 1;
     }
 
@@ -32,6 +33,7 @@ export const config = {
         '/',
         '/sign-in',
         '/sign-up',
+        '/verify-email',
         '/posts/:path*',
         '/notifications',
         '/profiles/:path*',

@@ -1,5 +1,4 @@
 'use client';
-
 import Link from 'next/link';
 import GoogleIcon from '@/components/icon/google-icon';
 import axios from 'axios';
@@ -8,9 +7,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { toast } from 'sonner';
-import { setCookie } from 'cookies-next';
 import { Separator } from '@/components/ui/separator';
 import { Input } from '@/components/ui/input';
 import { Tokens } from '@/types';
@@ -24,77 +22,69 @@ import {
     FormMessage,
 } from '@/components/ui/form';
 import { useAuth } from '@/components/providers/auth-provider';
+import { useSignInOauth } from '@/hooks/use-sign-in-oauth';
+import { useAuthApi } from '@/api/auth/use-auth-api';
 
 const formSchema = z.object({
-    email: z.string().email('Email is not valid'),
-    password: z.string().min(6, '6 characters at least'),
+    email: z.string().min(1, 'Vui lòng nhập email').email('Email không hợp lệ'),
+    password: z.string().min(6, 'Tối thiểu 6 ký tự'),
 });
 
-type ProfileFormValues = z.infer<typeof formSchema>;
+export type LoginFormType = z.infer<typeof formSchema>;
 
-interface ProfileFormProps {
-    initialData: ProfileFormValues | null;
-}
+const baseUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/auth`;
 
-const LoginPage = ({ initialData }: ProfileFormProps) => {
+const LoginPage = () => {
     const router = useRouter();
     const queryClient = useQueryClient();
-    const [isLoading, setisLoading] = useState(false);
-    const { currentUser, isFetching, setAuthToken } = useAuth();
 
-    const form = useForm<ProfileFormValues>({
+    const { login } = useAuthApi();
+    const { currentUser, handleCookies } = useAuth();
+
+    const { isLoading, setisLoading, signInWithOauth } = useSignInOauth();
+
+    const form = useForm<LoginFormType>({
         resolver: zodResolver(formSchema),
-        defaultValues: initialData || {
+        defaultValues: {
             email: '',
             password: '',
         },
     });
 
     const { data, mutate, isSuccess } = useMutation({
-        mutationFn: async (values: ProfileFormValues) => {
-            const response = await axios.post(
-                `${process.env.NEXT_PUBLIC_BASE_URL}/auth/login`,
-                values,
-            );
-
-            return response.data as Tokens;
-        },
+        mutationFn: (values: LoginFormType) => login(values),
         onError: (error: Error) => {
             console.log(error);
             setisLoading(false);
-            toast.error('Email or password incorrect');
+            toast.error('Email hoặc mật khẩu không đúng');
         },
     });
 
-    const onSubmit = (values: ProfileFormValues) => {
+    const onSubmit = (values: LoginFormType) => {
         setisLoading(true);
         mutate(values);
     };
 
     useEffect(() => {
         if (isSuccess) {
-            setCookie('access_token', data?.accessToken);
-            setCookie('refresh_token', data?.refreshToken);
-            setAuthToken({
-                accessToken: data?.accessToken,
-                refreshToken: data?.refreshToken,
-            });
+            handleCookies(data);
             queryClient.invalidateQueries();
             router.refresh();
             router.push('/');
         }
-    }, [data, router, queryClient, isSuccess, currentUser, setAuthToken]);
+    }, [data, router, queryClient, isSuccess, currentUser, handleCookies]);
 
     return (
         <div className='flex flex-col items-center justify-center gap-y-[30px] w-[580px] h-full'>
             <div className='flex flex-col items-center justify-center gap-y-[10px]'>
                 <h1 className='text-gray78 font-bold text-lg lg:text-3xl dark:text-white'>
-                    Sign In
+                    Đăng nhập
                 </h1>
                 <p className='text-gray78 font-medium text-sm lg:text-base dark:text-white text-center'>
-                    Welcome back, you’ve been missed!
+                    Đăng nhập để tiếp tục và kết nối với mọi người.
                 </p>
             </div>
+
             <div className='bg-white relative dark:bg-[#212833] rounded-[20px] p-10 w-full flex flex-col gap-y-5 lg:gap-y-[30px]'>
                 {isLoading && (
                     <div className='bg-white/20 dark:bg-dark2/20 backdrop-blur-[2px] rounded-[20px] h-full w-full inset-0 absolute z-50 flex items-center justify-center transition select-none'>
@@ -104,12 +94,13 @@ const LoginPage = ({ initialData }: ProfileFormProps) => {
 
                 <div className='flex items-center'>
                     <Button
+                        onClick={() => signInWithOauth()}
                         variant='ghost'
-                        className='py-18 pl-4 bg-gray78/5 dark:bg-gray78 h-10 lg:h-[52px] rounded-[10px] w-full'
+                        className='py-18 pl-4 bg-gray78/5 dark:bg-gray78 h-10 lg:h-[52px] rounded-[10px] w-full relative'
                     >
                         <GoogleIcon />
                         <span className='ml-5 text-sm lg:text-base font-semibold text-gray78 dark:text-white select-none'>
-                            Log in with Google
+                            Đăng nhập với Google
                         </span>
                     </Button>
                 </div>
@@ -117,7 +108,7 @@ const LoginPage = ({ initialData }: ProfileFormProps) => {
                 <div className='flex items-center'>
                     <Separator className='w-1/2 h-[1px] shrink dark:bg-gray78' />
                     <span className='px-5 text-sm lg:text-lg font-bold text-gray78 dark:text-white'>
-                        OR
+                        Hoặc
                     </span>
                     <Separator className='w-1/2 h-[1px] shrink dark:bg-gray78' />
                 </div>
@@ -167,9 +158,13 @@ const LoginPage = ({ initialData }: ProfileFormProps) => {
                                 </FormItem>
                             )}
                         />
-
-                        <div className='font-medium text-sm text-right w-full dark:text-white'>
-                            Forgot password?
+                        <div className='w-full text-right'>
+                            <Link
+                                href='/verify-email'
+                                className='font-medium text-sm w-fit'
+                            >
+                                Quên mật khẩu?
+                            </Link>
                         </div>
                         <Button
                             disabled={isLoading}
@@ -177,15 +172,15 @@ const LoginPage = ({ initialData }: ProfileFormProps) => {
                             type='submit'
                             className='w-full h-10 lg:h-[52px] rounded-md lg:rounded-[10px] mt-[30px] text-sm md:text-base'
                         >
-                            Sign In
+                            Đăng nhập
                         </Button>
                     </form>
                 </Form>
 
-                <div className='text-sm md:text-base text-gray78 dark:text-white font-medium mt-[30px] text-center'>
-                    You haven&apos;t account?
-                    <Link href='/sign-up' className='ml-4 text-[#377DFF]'>
-                        Sign Up
+                <div className='text-sm md:text-base font-medium mt-[30px] text-center'>
+                    Bạn chưa có tài khoản?
+                    <Link href='/sign-up' className='ml-2 text-[#377DFF]'>
+                        Đăng ký
                     </Link>
                 </div>
             </div>

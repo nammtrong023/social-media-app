@@ -20,16 +20,21 @@ const UserBox = ({ user }: UserBoxProps) => {
     const { data, mutate, isPending, isSuccess } = useMutation({
         mutationKey: ['direct-chat'],
         mutationFn: () => createConversation(user.id),
-        onSuccess: onClose,
+        onSuccess: () => {},
     });
 
-    if (data && isSuccess) {
-        router.push(`/conversations/${data?.id}`);
-    }
+    const handleMutate = () => {
+        mutate();
+
+        if (data && isSuccess) {
+            onClose();
+            router.push(`/conversations/${data?.id}`);
+        }
+    };
 
     return (
         <div
-            onClick={() => mutate()}
+            onClick={() => handleMutate()}
             className='bg-white dark:bg-dark1 cursor-pointer hover:bg-gray78/10 flex items-center gap-x-[10px] h-full w-full p-3 rounded-lg'
         >
             <UserAvatar

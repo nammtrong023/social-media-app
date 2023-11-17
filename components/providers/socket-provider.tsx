@@ -24,11 +24,14 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
     const [isConnected, setIsConnected] = useState(false);
 
     useEffect(() => {
-        const socketInstance = new (ClientIO as any)(process.env.NEXT_PUBLIC_BASE_URL, {
-            extraHeaders: {
-                Authorization: `Bearer ${authToken?.accessToken}`,
+        const socketInstance = new (ClientIO as any)(
+            process.env.NEXT_PUBLIC_BASE_URL,
+            {
+                extraHeaders: {
+                    Authorization: `Bearer ${authToken?.accessToken}`,
+                },
             },
-        });
+        );
 
         socketInstance.on('connect', () => {
             setIsConnected(true);
@@ -46,6 +49,8 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
     }, [authToken?.accessToken]);
 
     return (
-        <SocketContext.Provider value={{ socket, isConnected }}>{children}</SocketContext.Provider>
+        <SocketContext.Provider value={{ socket, isConnected }}>
+            {children}
+        </SocketContext.Provider>
     );
 };

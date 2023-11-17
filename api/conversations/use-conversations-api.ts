@@ -24,10 +24,15 @@ const useConversationsApi = () => {
         return response.data as ConversationType;
     };
 
+    const deleteConversation = async (conversationId: string | undefined) => {
+        await axiosPrivate.delete(`${baseUrl}/${conversationId}`);
+    };
+
     return {
         getConversations,
         getConversationById,
         createConversation,
+        deleteConversation,
     };
 };
 

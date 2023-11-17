@@ -41,7 +41,10 @@ export default function Slider({
                 {images.map((item, index) => (
                     <SwiperSlide key={index}>
                         <div
-                            className={cn('min-h-[450px] relative h-full w-full', className)}
+                            className={cn(
+                                'min-h-[450px] relative h-full w-full',
+                                className,
+                            )}
                             onClick={onClick}
                         >
                             <Image
@@ -57,7 +60,12 @@ export default function Slider({
                 <div className={cn('prev fixed left-1', classNameControlBtn)}>
                     <ChevronLeft size={20} className='dark:text-white' />
                 </div>
-                <div className={cn('next fixed right-1 !overflow-visible', classNameControlBtn)}>
+                <div
+                    className={cn(
+                        'next fixed right-1 !overflow-visible',
+                        classNameControlBtn,
+                    )}
+                >
                     <ChevronRight size={20} className='dark:text-white' />
                 </div>
             </Swiper>

@@ -12,6 +12,7 @@ import useActiveList from '@/hooks/use-active-list';
 import { ConversationType, UserType } from '@/types';
 import { useModalStore } from '@/hooks/use-modals';
 import { AlertModal } from './modals/alert-modal';
+import useConversationsApi from '@/api/conversations/use-conversations-api';
 
 interface ProfileDrawerProps {
     user: UserType | undefined;
@@ -20,7 +21,9 @@ interface ProfileDrawerProps {
 
 const ProfileDrawer = ({ user, conversation }: ProfileDrawerProps) => {
     const router = useRouter();
+
     const [isLoading, setIsLoading] = useState(false);
+    const { deleteConversation } = useConversationsApi();
 
     const { members } = useActiveList();
     const isActive = members.indexOf(user?.email!) !== -1;
@@ -35,7 +38,7 @@ const ProfileDrawer = ({ user, conversation }: ProfileDrawerProps) => {
     const handleDelete = async () => {
         try {
             setIsLoading(true);
-            await axios.delete(`/api/conversations/${conversation?.id}`);
+            deleteConversation(conversation?.id);
 
             toast.success('Thành công');
             router.push('/conversations');
