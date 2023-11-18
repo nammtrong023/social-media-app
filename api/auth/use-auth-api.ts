@@ -1,4 +1,4 @@
-import { VerifyEmailForm } from '@/app/(auth)/confirm/page';
+import { VerifyEmailForm } from '@/app/(auth)/password-recovery/page';
 import { LoginFormType } from '@/app/(auth)/sign-in/page';
 import { useAuth } from '@/components/providers/auth-provider';
 import { Tokens } from '@/types';
@@ -10,7 +10,9 @@ export const useAuthApi = () => {
     const { handleCookies } = useAuth();
 
     const resetPassword = async (value: VerifyEmailForm) => {
-        await axios.post(`${baseUrl}/reset-password`, value);
+        const response = await axios.post(`${baseUrl}/reset-password`, value);
+        handleCookies(response.data);
+        return response.data as Tokens;
     };
 
     const login = async (values: LoginFormType) => {

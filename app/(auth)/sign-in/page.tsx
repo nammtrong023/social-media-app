@@ -71,7 +71,7 @@ const LoginPage = () => {
     }, [data, router, queryClient, isSuccess, currentUser, handleCookies]);
 
     return (
-        <div className='flex flex-col items-center justify-center gap-y-[30px] w-[580px] h-full'>
+        <>
             <div className='flex flex-col items-center justify-center gap-y-[10px]'>
                 <h1 className='text-gray78 font-bold text-lg lg:text-3xl dark:text-white'>
                     Đăng nhập
@@ -156,7 +156,7 @@ const LoginPage = () => {
                         />
                         <div className='w-full text-right'>
                             <Link
-                                href='/verify-email'
+                                href='/verify/email'
                                 className='font-medium text-sm w-fit'
                             >
                                 Quên mật khẩu?
@@ -180,7 +180,7 @@ const LoginPage = () => {
                     </Link>
                 </div>
             </div>
-        </div>
+        </>
     );
 };
 

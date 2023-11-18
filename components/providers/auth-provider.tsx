@@ -18,7 +18,8 @@ import React, {
 type ContextDataType = {
     currentUser: UserType | undefined;
     authToken: Tokens | undefined;
-    isFetching: boolean | null;
+    emailSignUp: string;
+    setEmailSignUp: (email: string) => void;
     handleCookies: (data: Tokens) => void;
     setAuthToken: (authToken: Tokens) => void;
     setCurrentUser: (currentUser: UserType | undefined) => void;
@@ -36,8 +37,9 @@ const AuthContext = createContext<ContextDataType>({
         accessToken,
         refreshToken,
     },
+    emailSignUp: '',
+    setEmailSignUp: () => {},
     handleCookies: () => {},
-    isFetching: null,
     setAuthToken: () => {},
     setCurrentUser: () => {},
     logout: () => {},
@@ -49,7 +51,10 @@ export const useAuth = () => {
 
 const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const router = useRouter();
+
     const [currentUser, setCurrentUser] = useState<UserType>();
+    const [emailSignUp, setEmailSignUp] = useState('');
+
     const [authToken, setAuthToken] = useState<Tokens | undefined>({
         accessToken,
         refreshToken,
@@ -74,7 +79,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         return response.data as UserType;
     };
 
-    const { data, isSuccess, isFetching } = useQuery({
+    const { data, isSuccess } = useQuery({
         initialData: currentUser,
         queryKey: ['get-current-user'],
         queryFn: () => getCurrentUser(),
@@ -115,7 +120,8 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const contextData = {
         authToken,
         currentUser,
-        isFetching,
+        emailSignUp,
+        setEmailSignUp,
         setAuthToken,
         handleCookies,
         logout,

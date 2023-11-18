@@ -6,7 +6,7 @@ import { DateFieldForm } from '@/components/ui/date-field-form';
 import { Input } from '@/components/ui/input';
 import * as z from 'zod';
 import axios from 'axios';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DateValidationError } from '@mui/x-date-pickers';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -26,9 +26,10 @@ import GoogleIcon from '@/components/icon/google-icon';
 import { Separator } from '@/components/ui/separator';
 import { useMediaQuery } from '@mui/material';
 import { useTheme } from 'next-themes';
-import { useRouter } from 'next/navigation';
 import { Gender } from '@/types';
 import { useSignInOauth } from '@/hooks/use-sign-in-oauth';
+import { useAuth } from '@/components/providers/auth-provider';
+import { useRouter } from 'next/navigation';
 
 const formSchema = z.object({
     name: z.string().min(5, 'Tối thiểu 5 ký tự'),
@@ -45,14 +46,16 @@ const formSchema = z.object({
 
 type RegisterFormType = z.infer<typeof formSchema>;
 
-const baseUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/auth/register`;
+const baseUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/auth`;
 
 const RegisterPage = () => {
-    const router = useRouter();
     const { theme } = useTheme();
+    const router = useRouter();
     const isLaptop = useMediaQuery('(min-width:1024px)');
 
+    const { setEmailSignUp } = useAuth();
     const { isLoading, setisLoading, signInWithOauth } = useSignInOauth();
+
     const [errorDateField, setErrorDateField] =
         useState<DateValidationError | null>(null);
 
@@ -67,33 +70,46 @@ const RegisterPage = () => {
         },
     });
 
-    const mutation = useMutation({
+    const { mutate: signUp, isSuccess } = useMutation({
         mutationFn: async (values: RegisterFormType) => {
-            return await axios.post(baseUrl, values);
+            return await axios.post(`${baseUrl}/register`, values);
         },
         onSuccess: () => {
             toast.success('Thành công');
-            router.push('/sign-in');
-        },
-        onError: () => {
             setisLoading(false);
+        },
+        onError: (error) => {
+            setisLoading(false);
+            console.log(error);
             toast.error('Email đã tồn tại!');
         },
     });
 
     const onSubmit = async (values: RegisterFormType) => {
         setisLoading(true);
-        mutation.mutate(values);
+        signUp(values);
     };
 
+    useEffect(() => {
+        const emailValue = form.getValues('email');
+
+        if (isSuccess) {
+            setEmailSignUp(emailValue);
+            router.refresh();
+            router.push('/verify/otp');
+        }
+    }, [form, isSuccess, router, setEmailSignUp]);
+
     return (
-        <div className='flex flex-col items-center justify-center gap-y-[30px] min-w-[320px] w-full max-w-[580px] h-full'>
+        <>
             <div className='flex flex-col items-center justify-center gap-y-[10px]'>
                 <h1 className=' font-bold text-lg lg:text-3xl'>
-                    Đăng ký tài khoản
+                    {!isSuccess ? 'Đăng ký tài khoản' : 'Xác thực email'}
                 </h1>
                 <p className='font-medium text-sm lg:text-base text-center'>
-                    Tạo tài khoản để tiếp tục và kết nối với mọi người.
+                    {!isSuccess
+                        ? 'Tạo tài khoản để tiếp tục và kết nối với mọi người.'
+                        : 'Vui lòng kiểm tra email của bạn.'}
                 </p>
             </div>
             <div className='bg-white dark:bg-[#212833] rounded-[20px] p-6 lg:p-10 flex flex-col gap-y-5 lg:gap-y-[30px] w-full'>
@@ -115,7 +131,6 @@ const RegisterPage = () => {
                         </span>
                     </Button>
                 </div>
-
                 <div className='flex items-center'>
                     <Separator className='w-1/2 h-[1px] shrink dark:bg-gray78' />
                     <span className='px-5 text-sm lg:text-lg font-bold '>
@@ -123,7 +138,6 @@ const RegisterPage = () => {
                     </span>
                     <Separator className='w-1/2 h-[1px] shrink dark:bg-gray78' />
                 </div>
-
                 <Form {...form}>
                     <form
                         method='post'
@@ -272,6 +286,7 @@ const RegisterPage = () => {
                         </Button>
                     </form>
                 </Form>
+
                 <div className='flex items-center justify-center text-sm md:text-base font-medium mt-[30px]'>
                     Bạn đã có tài khoản?
                     <Link href='/sign-in' className='ml-2 text-[#377DFF]'>
@@ -279,7 +294,7 @@ const RegisterPage = () => {
                     </Link>
                 </div>
             </div>
-        </div>
+        </>
     );
 };
 

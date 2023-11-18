@@ -1,17 +1,17 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import axios from 'axios';
 import * as z from 'zod';
+import Link from 'next/link';
+import { toast } from 'sonner';
+import { useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AtSignIcon } from 'lucide-react';
-import { Form, FormField, FormItem, FormMessage } from '@/components/ui/form';
-import { useEffect } from 'react';
-import { toast } from 'sonner';
 import { useMutation } from '@tanstack/react-query';
-import Link from 'next/link';
+import { Form, FormField, FormItem, FormMessage } from '@/components/ui/form';
 
 const formSchema = z.object({
     email: z.string().min(1, 'Vui lòng nhập email').email('Email không hợp lệ'),
@@ -34,7 +34,10 @@ const VerifyEmailPage = () => {
         mutationFn: async (value: VerifyEmailForm) => {
             await axios.post(baseUrl, value);
         },
-        onError: () => toast.error('Không tìm thấy email của bạn'),
+        onError: (error) => {
+            console.log(error);
+            toast.error('Không tìm thấy email của bạn');
+        },
     });
 
     const { email } = form.getValues();
@@ -46,7 +49,7 @@ const VerifyEmailPage = () => {
     };
 
     return (
-        <div className='flex flex-col items-center justify-center gap-y-[30px] w-[580px] h-full'>
+        <>
             {!isSuccess && (
                 <div className='flex flex-col items-center justify-center gap-y-[10px]'>
                     <h1 className='font-bold text-lg lg:text-3xl'>
@@ -110,7 +113,7 @@ const VerifyEmailPage = () => {
                     </div>
                 )}
             </div>
-        </div>
+        </>
     );
 };
 

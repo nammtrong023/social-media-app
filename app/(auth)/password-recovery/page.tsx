@@ -1,19 +1,18 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import * as z from 'zod';
 import jwt from 'jsonwebtoken';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { redirect, useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/components/providers/auth-provider';
 import { Loader2, Lock } from 'lucide-react';
 import { useMutation } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { useAuthApi } from '@/api/auth/use-auth-api';
-import { LoginFormType } from '../sign-in/page';
 import {
     Form,
     FormControl,
@@ -31,17 +30,16 @@ export type VerifyEmailForm = z.infer<typeof formSchema> & {
     resetToken: string;
 };
 
-const ConfirmationPage = () => {
+const PasswordRecoveryPage = () => {
     const router = useRouter();
     const { authToken } = useAuth();
 
-    const { login, resetPassword } = useAuthApi();
+    const { resetPassword } = useAuthApi();
     const [isLoading, setIsLoading] = useState(false);
 
     const searchParams = useSearchParams();
     const resetToken = searchParams.get('reset-token');
 
-    let email = '';
     const decodedToken = resetToken && jwt.decode(resetToken);
 
     const form = useForm<VerifyEmailForm>({
@@ -52,53 +50,24 @@ const ConfirmationPage = () => {
         },
     });
 
-    const { mutate, isSuccess: resetSuccess } = useMutation({
+    const { mutate, isSuccess } = useMutation({
         mutationKey: ['confirm-password'],
         mutationFn: (values: VerifyEmailForm) => resetPassword(values),
         onError: () => setIsLoading(false),
     });
 
-    const { mutate: mutateLogin, isSuccess: loginSuccess } = useMutation({
-        mutationKey: ['login', 'confirm-page'],
-        mutationFn: (values: LoginFormType) => login(values),
-        onError: () => setIsLoading(false),
-    });
-
-    const signIn = useCallback(
-        async (email: string, password: string) => {
-            if (
-                decodedToken &&
-                typeof decodedToken !== 'string' &&
-                decodedToken.email
-            ) {
-                email = decodedToken.email;
-
-                mutateLogin({ email, password });
-            }
-        },
-        [decodedToken, mutateLogin],
-    );
-
     useEffect(() => {
-        const { newPassword } = form.getValues();
-
-        if (resetSuccess) {
-            signIn(email, newPassword);
-        }
-    }, [email, form, resetSuccess, signIn]);
-
-    useEffect(() => {
-        if (loginSuccess && authToken?.accessToken) {
+        if (isSuccess && authToken?.accessToken) {
             router.refresh();
             router.push('/');
         }
-    }, [router, loginSuccess, authToken?.accessToken, resetSuccess]);
+    }, [router, authToken?.accessToken, isSuccess]);
 
     if (!decodedToken || authToken?.accessToken) {
         return redirect('/sign-in');
     }
 
-    const onSubmit = async (value: VerifyEmailForm) => {
+    const onSubmit = (value: VerifyEmailForm) => {
         const { newPassword, confirmNewPassword } = value;
 
         if (newPassword !== confirmNewPassword) {
@@ -117,7 +86,7 @@ const ConfirmationPage = () => {
     };
 
     return (
-        <div className='flex flex-col items-center justify-center gap-y-[30px] min-w-[320px] w-full max-w-[580px] h-full'>
+        <>
             <div className='flex flex-col items-center justify-center gap-y-[10px]'>
                 <h1 className=' font-bold text-lg lg:text-3xl'>
                     Đặt mật khẩu mới
@@ -187,8 +156,8 @@ const ConfirmationPage = () => {
                     </form>
                 </Form>
             </div>
-        </div>
+        </>
     );
 };
 
-export default ConfirmationPage;
+export default PasswordRecoveryPage;

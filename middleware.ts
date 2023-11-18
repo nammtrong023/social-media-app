@@ -7,8 +7,11 @@ export async function middleware(request: NextRequest) {
     const path = request.nextUrl.pathname;
 
     const publicPath =
-        path === '/sign-in' || path === '/sign-up' || path === '/verify-email';
-        
+        path === '/sign-in' ||
+        path === '/sign-up' ||
+        path === '/verify/email' ||
+        path === '/verify/otp';
+
     const accessToken = request.cookies.get('access_token')?.value || '';
 
     let isExpired = true;
@@ -33,7 +36,7 @@ export const config = {
         '/',
         '/sign-in',
         '/sign-up',
-        '/verify-email',
+        '/verify/:path*',
         '/posts/:path*',
         '/notifications',
         '/profiles/:path*',
