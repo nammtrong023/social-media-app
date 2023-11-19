@@ -30,6 +30,18 @@ export const DateFieldForm: React.FC<DateFieldFormProps> = ({
     onChange,
     onError,
 }) => {
+    // const useStyles = makeStyles(() => ({
+    //     btn: {
+    //         fontFamily: 'Manrope',
+    //         borderColor: '#15e577',
+    //         color: '#000',
+    //         backgroundColor: 'white',
+    //         '&:hover': {
+    //             backgroundColor: '#15e577',
+    //         },
+    //     },
+    // }));
+
     const errorMessage = React.useMemo(() => {
         switch (error) {
             case 'maxDate': {

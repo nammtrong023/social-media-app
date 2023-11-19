@@ -93,6 +93,29 @@ export function EditProfileInfoModal({ initialData }: ProfileFormProps) {
         mutate(data);
     };
 
+    const sxStyle = {
+        '& .MuiInputBase-root': {
+            borderRadius: '6px',
+            height: '40px',
+            color: theme === 'dark' ? 'white' : '#4e5d78',
+        },
+        '& .MuiSvgIcon-root': {
+            color: theme === 'dark' ? 'white' : '#4e5d78',
+        },
+        '& .MuiOutlinedInput-notchedOutline': {
+            borderColor: '#4e5d78',
+        },
+        '& .css-dt8m01-MuiFormHelperText-root.Mui-error': {
+            color: '#FF5630',
+        },
+        width: '100%',
+        '& .MuiOutlinedInput-root': {
+            '&:hover fieldset': {
+                borderColor: '#4e5d78',
+            },
+        },
+    };
+
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
@@ -153,32 +176,7 @@ export function EditProfileInfoModal({ initialData }: ProfileFormProps) {
                                                 onChange={(date) => {
                                                     field.onChange(date);
                                                 }}
-                                                sx={{
-                                                    '& .MuiInputBase-root': {
-                                                        borderRadius: '6px',
-                                                        height: '40px',
-                                                        color:
-                                                            theme === 'dark'
-                                                                ? 'white'
-                                                                : '#4e5d78',
-                                                    },
-                                                    '& .MuiSvgIcon-root': {
-                                                        color:
-                                                            theme === 'dark'
-                                                                ? 'white'
-                                                                : '#4e5d78',
-                                                    },
-                                                    '& .MuiOutlinedInput-notchedOutline':
-                                                        {
-                                                            borderColor:
-                                                                '#4e5d78',
-                                                        },
-                                                    '& .css-dt8m01-MuiFormHelperText-root.Mui-error':
-                                                        {
-                                                            color: '#FF5630',
-                                                        },
-                                                    width: '100%',
-                                                }}
+                                                sx={sxStyle}
                                                 disabled={isPending}
                                             />
                                             {field.value === null && (

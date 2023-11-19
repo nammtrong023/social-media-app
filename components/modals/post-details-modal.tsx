@@ -25,7 +25,11 @@ interface PostDetailsModalProps {
     post: PostType;
 }
 
-const PostDetailsModal: FC<PostDetailsModalProps> = ({ currentUser, otherUsers, post }) => {
+const PostDetailsModal: FC<PostDetailsModalProps> = ({
+    currentUser,
+    otherUsers,
+    post,
+}) => {
     const router = useRouter();
     const { deletePost } = usePostsApi();
     const queryClient = useQueryClient();
@@ -50,7 +54,9 @@ const PostDetailsModal: FC<PostDetailsModalProps> = ({ currentUser, otherUsers, 
         otherUsers.push(currentUser);
     }
 
-    const profileWithLikeIds = otherUsers.filter((user) => likeIds.includes(user.id));
+    const profileWithLikeIds = otherUsers.filter((user) =>
+        likeIds.includes(user.id),
+    );
     const commentContents = post.comments.map((comment) => comment.content);
 
     useLayoutEffect(() => {
@@ -107,9 +113,9 @@ const PostDetailsModal: FC<PostDetailsModalProps> = ({ currentUser, otherUsers, 
                                 >
                                     <div
                                         className='h-full lg:h-[80%] w-full lg:w-full lg:max-w-[95%] xl:max-w-[800px] min-w-[320px]'
-                                        onClick={(e: React.MouseEvent<HTMLDivElement>) =>
-                                            e.stopPropagation()
-                                        }
+                                        onClick={(
+                                            e: React.MouseEvent<HTMLDivElement>,
+                                        ) => e.stopPropagation()}
                                     >
                                         <Slider
                                             images={postImages}
@@ -122,12 +128,17 @@ const PostDetailsModal: FC<PostDetailsModalProps> = ({ currentUser, otherUsers, 
                                     <div className='lg:max-h-fit h-full max-h-[100vh] lg:h-full overflow-auto'>
                                         <ScrollArea
                                             style={{
-                                                maxHeight: isLaptop ? '' : maxHeight,
+                                                maxHeight: isLaptop
+                                                    ? ''
+                                                    : maxHeight,
                                             }}
                                             className='overflow-auto lg:pb-10 lg:max-h-[100%]'
                                         >
                                             <div className='max-h-[170px] h-full px-4'>
-                                                <PostHeader post={post} currentUser={currentUser} />
+                                                <PostHeader
+                                                    post={post}
+                                                    currentUser={currentUser}
+                                                />
                                                 <PostInteraction
                                                     post={post}
                                                     comments={post.comments}
@@ -135,18 +146,26 @@ const PostDetailsModal: FC<PostDetailsModalProps> = ({ currentUser, otherUsers, 
                                                     users={profileWithLikeIds}
                                                 />
                                             </div>
-                                            {post.comments && commentContents.length !== 0 && (
-                                                <div className='flex flex-col items-center lg:mt-4 max-w-[350px] w-full'>
-                                                    {post.comments.map((data) => (
-                                                        <CommentItem
-                                                            key={data.id}
-                                                            data={data}
-                                                            currentUser={currentUser}
-                                                            background='bg-[#f6f7f8] dark:bg-dark2'
-                                                        />
-                                                    ))}
-                                                </div>
-                                            )}
+                                            {post.comments &&
+                                                commentContents.length !==
+                                                    0 && (
+                                                    <div className='flex flex-col items-center lg:mt-4 max-w-[350px] w-full'>
+                                                        {post.comments.map(
+                                                            (data) => (
+                                                                <CommentItem
+                                                                    key={
+                                                                        data.id
+                                                                    }
+                                                                    data={data}
+                                                                    currentUser={
+                                                                        currentUser
+                                                                    }
+                                                                    background='bg-[#f6f7f8] dark:bg-dark2'
+                                                                />
+                                                            ),
+                                                        )}
+                                                    </div>
+                                                )}
                                         </ScrollArea>
                                     </div>
                                     <div
@@ -155,7 +174,10 @@ const PostDetailsModal: FC<PostDetailsModalProps> = ({ currentUser, otherUsers, 
                                     >
                                         <Separator />
                                         <div className='px-2 lg:px-4 pt-2 w-full'>
-                                            <CommentInput post={post} currentUser={currentUser} />
+                                            <CommentInput
+                                                post={post}
+                                                currentUser={currentUser}
+                                            />
                                         </div>
                                     </div>
                                 </div>

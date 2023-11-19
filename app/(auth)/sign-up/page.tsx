@@ -24,7 +24,7 @@ import { AtSignIcon, Loader2, Lock, Smile } from 'lucide-react';
 import Link from 'next/link';
 import GoogleIcon from '@/components/icon/google-icon';
 import { Separator } from '@/components/ui/separator';
-import { useMediaQuery } from '@mui/material';
+import { TextField, styled, useMediaQuery } from '@mui/material';
 import { useTheme } from 'next-themes';
 import { Gender } from '@/types';
 import { useSignInOauth } from '@/hooks/use-sign-in-oauth';
@@ -37,7 +37,6 @@ const formSchema = z.object({
     email: z.string().min(1, 'Vui lòng nhập email').email('Email không hợp lệ'),
     birth: z.date({
         required_error: 'Vui lòng chọn ngày sinh',
-        invalid_type_error: 'Vui lòng chọn ngày sinh',
     }),
     gender: z.enum([Gender.MALE, Gender.FEMALE], {
         errorMap: () => ({ message: 'Vui lòng chọn giới tính!' }),
@@ -99,6 +98,32 @@ const RegisterPage = () => {
             router.push('/verify/otp');
         }
     }, [form, isSuccess, router, setEmailSignUp]);
+
+    const sxStyle = {
+        '& .MuiInputBase-root': {
+            borderRadius: isLaptop ? '10px' : '6px',
+            height: isLaptop ? '52px' : '40px',
+            color: theme === 'dark' ? '#fff' : '#4e5d78',
+        },
+        '& .MuiSvgIcon-root': {
+            color: theme === 'dark' ? '#fff' : '#4e5d78',
+        },
+        '& .MuiOutlinedInput-notchedOutline': {
+            borderColor: '#4e5d78',
+        },
+        '& .css-dt8m01-MuiFormHelperText-root.Mui-error': {
+            color: '#FF5630',
+        },
+        width: '100%',
+        '&:hover .fieldset': {
+            borderColor: 'transparent',
+        },
+        '& .MuiOutlinedInput-root': {
+            '&:hover fieldset': {
+                borderColor: '#4e5d78',
+            },
+        },
+    };
 
     return (
         <>
@@ -222,35 +247,7 @@ const RegisterPage = () => {
                                             onChange={(date) => {
                                                 field.onChange(date);
                                             }}
-                                            sx={{
-                                                '& .MuiInputBase-root': {
-                                                    borderRadius: isLaptop
-                                                        ? '10px'
-                                                        : '6px',
-                                                    height: isLaptop
-                                                        ? '52px'
-                                                        : '40px',
-                                                    color:
-                                                        theme === 'dark'
-                                                            ? '#fff'
-                                                            : '#4e5d78',
-                                                },
-                                                '& .MuiSvgIcon-root': {
-                                                    color:
-                                                        theme === 'dark'
-                                                            ? '#fff'
-                                                            : '#4e5d78',
-                                                },
-                                                '& .MuiOutlinedInput-notchedOutline':
-                                                    {
-                                                        borderColor: '#4e5d78',
-                                                    },
-                                                '& .css-dt8m01-MuiFormHelperText-root.Mui-error':
-                                                    {
-                                                        color: '#FF5630',
-                                                    },
-                                                width: '100%',
-                                            }}
+                                            sx={sxStyle}
                                             disabled={isLoading}
                                         />
                                         <FormMessage />

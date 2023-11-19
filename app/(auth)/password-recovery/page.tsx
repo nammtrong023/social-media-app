@@ -32,7 +32,7 @@ export type VerifyEmailForm = z.infer<typeof formSchema> & {
 
 const PasswordRecoveryPage = () => {
     const router = useRouter();
-    const { authToken } = useAuth();
+    const { authToken, handleCookies } = useAuth();
 
     const { resetPassword } = useAuthApi();
     const [isLoading, setIsLoading] = useState(false);
@@ -50,18 +50,22 @@ const PasswordRecoveryPage = () => {
         },
     });
 
-    const { mutate, isSuccess } = useMutation({
+    const { data, mutate, isSuccess } = useMutation({
         mutationKey: ['confirm-password'],
         mutationFn: (values: VerifyEmailForm) => resetPassword(values),
         onError: () => setIsLoading(false),
     });
 
     useEffect(() => {
+        if (isSuccess) {
+            handleCookies(data);
+        }
+
         if (isSuccess && authToken?.accessToken) {
             router.refresh();
             router.push('/');
         }
-    }, [router, authToken?.accessToken, isSuccess]);
+    }, [router, authToken?.accessToken, isSuccess, handleCookies, data]);
 
     if (!decodedToken || authToken?.accessToken) {
         return redirect('/sign-in');
@@ -93,12 +97,6 @@ const PasswordRecoveryPage = () => {
                 </h1>
             </div>
             <div className='bg-white dark:bg-[#212833] rounded-[20px] p-6 lg:p-10 flex flex-col gap-y-5 lg:gap-y-[30px] w-full'>
-                {isLoading && (
-                    <div className='bg-white/20 dark:bg-dark2/20 backdrop-blur-[2px] rounded-[20px] h-full w-full inset-0 absolute z-50 flex items-center justify-center transition select-none'>
-                        <Loader2 className='w-10 h-10 animate-spin' />
-                    </div>
-                )}
-
                 <Form {...form}>
                     <form
                         method='post'
@@ -149,8 +147,11 @@ const PasswordRecoveryPage = () => {
                             disabled={isLoading}
                             variant='blue'
                             type='submit'
-                            className='w-full h-10 lg:h-[52px] rounded-md lg:rounded-[10px] text-sm md:text-base'
+                            className='w-full h-10 lg:h-[52px] rounded-md lg:rounded-[10px] text-sm md:text-base flex items-center justify-center gap-x-2'
                         >
+                            {isLoading && (
+                                <Loader2 className='w-[22px] h-[22px] animate-spin' />
+                            )}
                             Xác nhận và đăng nhập
                         </Button>
                     </form>

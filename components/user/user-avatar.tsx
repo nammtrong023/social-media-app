@@ -10,12 +10,27 @@ interface UserAvatarProps {
     onClick?: () => void;
 }
 
-const UserAvatar: FC<UserAvatarProps> = ({ className, username, src, onClick }) => {
+const UserAvatar: FC<UserAvatarProps> = ({
+    className,
+    username,
+    src,
+    onClick,
+}) => {
     return (
-        <Avatar onClick={onClick} className={cn('w-12 h-12 cursor-pointer', className)}>
-            <AvatarImage src={src || '/profile-placeholder.jpg'} className='object-cover' />
+        <Avatar
+            onClick={onClick}
+            className={cn('w-12 h-12 cursor-pointer', className)}
+        >
+            <AvatarImage
+                src={src || '/profile-placeholder.jpg'}
+                className='object-cover'
+            />
             <AvatarFallback className='w-12 h-12 relative'>
-                <Image src='/profile-placeholder.jpg' fill alt={username || ''} />
+                <Image
+                    src='/profile-placeholder.jpg'
+                    fill
+                    alt={username || ''}
+                />
             </AvatarFallback>
         </Avatar>
     );
