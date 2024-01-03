@@ -32,9 +32,6 @@ const OTPPage = () => {
             const response = await axios.post(`${baseUrl}/verify-otp`, data);
             return response.data as Tokens;
         },
-        onError: (error) => {
-            console.log(error);
-        },
     });
 
     const onSubmit = () => {

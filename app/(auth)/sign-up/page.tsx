@@ -79,8 +79,7 @@ const RegisterPage = () => {
         },
         onError: (error) => {
             setisLoading(false);
-            console.log(error);
-            toast.error('Email đã tồn tại!');
+            toast.error('Email không hợp lệ!');
         },
     });
 

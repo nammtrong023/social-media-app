@@ -35,7 +35,6 @@ const VerifyEmailPage = () => {
             await axios.post(baseUrl, value);
         },
         onError: (error) => {
-            console.log(error);
             toast.error('Không tìm thấy email của bạn');
         },
     });

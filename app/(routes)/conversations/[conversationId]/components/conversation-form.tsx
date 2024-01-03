@@ -15,7 +15,6 @@ import { toast } from 'sonner';
 import { useModalStore } from '@/hooks/use-modals';
 import useMessagesApi, { MessageData } from '@/api/messages/use-messages-api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { revalidatePath } from 'next/cache';
 
 const formSchema = z.object({
     content: z.string().min(1),
@@ -51,7 +50,6 @@ const ConversationForm = () => {
             setImageValue('');
         },
         onError: (error) => {
-            console.log(error);
             toast.error('Thất bại');
         },
     });

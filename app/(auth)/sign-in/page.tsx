@@ -50,7 +50,6 @@ const LoginPage = () => {
     const { data, mutate, isSuccess } = useMutation({
         mutationFn: (values: LoginFormType) => login(values),
         onError: (error: Error) => {
-            console.log(error);
             setisLoading(false);
             toast.error('Email hoặc mật khẩu không đúng');
         },
