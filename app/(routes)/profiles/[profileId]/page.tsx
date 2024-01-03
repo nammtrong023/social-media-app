@@ -168,14 +168,14 @@ const ProfilePage = ({ params }: { params: { profileId: string } }) => {
                         )}
                     </div>
                     <div className='flex flex-col items-end gap-y-2 md:gap-y-7 min-w-[320px] min-[550px]:max-w-[512px] w-full'>
-                        {currentUser.id === user.id ? (
+                        {currentUser.id === user.id && (
                             <PostCreateBox currentUser={currentUser} />
-                        ) : (
-                            !!posts.pages && (
-                                <p className='text-gray78/60 dark:text-white font-semibold text-2xl'>
-                                    Chưa có bài viết nào!
-                                </p>
-                            )
+                        )}
+
+                        {!!posts.pages && !currentUser.id && (
+                            <p className='text-gray78/60 dark:text-white font-semibold text-2xl'>
+                                Chưa có bài viết nào!
+                            </p>
                         )}
 
                         {posts.pages.flatMap((posts: PostType[]) =>
