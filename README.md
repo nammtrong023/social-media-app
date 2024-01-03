@@ -1,10 +1,8 @@
 # Social Media App: Next.js 14, React, TanStack Query, Tailwind
 
-[Demo link](...)
+[Demo link](http://47.128.149.194:3000)
 
 ## Backend Source
-
-[Demo link](http://47.128.149.194:3000)
 
 The backend source code for this project, you can found in the [backend repository](https://github.com/nammtrong023/social-media-app-be).
 
